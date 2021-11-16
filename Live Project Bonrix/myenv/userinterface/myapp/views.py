@@ -1148,7 +1148,8 @@ def updateBalanceValueUploadFile(cbc, cbb):
 
 
 def sample_Excel(request):
-    return render(request, 'sample_Excel.html')
+    expensList = ExpenseCategory.objects.all()
+    return render(request, 'sample_Excel.html',{'expensList':expensList})
 
 
 def download_excel_data(request):

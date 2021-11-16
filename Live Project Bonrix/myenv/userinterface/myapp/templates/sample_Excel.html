@@ -7,30 +7,15 @@
 <h2>Expense Category Excel</h2>
 <table id='testExportId' border="1">
   <tr>
-    <th>Firstname</th>
-    <th>Lastname</th>
-    <th>Savings</th>
+    <th>Id</th>
+    <th>Name</th>
   </tr>
+  {% for el in expensList %}
   <tr>
-    <td>Peter</td>
-    <td>Griffin</td>
-    <td>$100</td>
+    <td>{{el.id}}</td>
+    <td>{{el.category_name}}</td>
   </tr>
-  <tr>
-    <td>Lois</td>
-    <td>Griffin</td>
-    <td>$150</td>
-  </tr>
-  <tr>
-    <td>Joe</td>
-    <td>Swanson</td>
-    <td>$300</td>
-  </tr>
-  <tr>
-    <td>Cleveland</td>
-    <td>Brown</td>
-    <td>$250</td>
-</tr>
+  {% endfor %}
 </table>
 <br>
 <button id='btnExport'>
