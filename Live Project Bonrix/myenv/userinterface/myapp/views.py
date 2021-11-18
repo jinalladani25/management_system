@@ -4,18 +4,18 @@ from _ast import expr
 from tablib import Dataset
 from .models import User_Society_deatils, ExpenseCategory, IncomeCategory, Income_Expense_LedgerValue, \
     BalanceValue, \
-    Members_Vendor_Account
+    Members_Vendor_Account ,FileStoreValue
 from .forms import ExpensiveCategoryForm, IncomeCategoryForm, Income_Expense_LedgerForm, BalanceFrom, \
     Members_Vendor_AccountForm
 from .resource import ExpenseResource, IncomeResource, Members_VendoorsResource, Income_Expense_LedgerResource
 from django.shortcuts import render, redirect
 import xlwt
 from django.http import HttpResponse
-from datetime import datetime, date
+
 import time
 import datetime
 from datetime import date
-
+from datetime import datetime, date
 
 # Create your views here.
 def index(request):
@@ -1215,3 +1215,17 @@ def export_csv(request):
                          exp.closing_balance_cash,exp.opening_balance_bank,exp.closing_balance_bank,exp.entry_time])
 
     return response
+
+def file_store(request,id):
+    income_Expense_LedgerId = Income_Expense_LedgerValue.objects.get(id=id)
+    text = request.POST['text']
+    filestore = request.FILES['filestore']
+    print("--------------",text,income_Expense_LedgerId)
+    fileid = FileStoreValue.objects.create(text=text,type_file=filestore,income_Expense_LedgerId_id=income_Expense_LedgerId)
+    showfiles = FileStoreValue.objects.all()
+    return render(request,'showincome_expense_ledger.html',{'showfiles':showfiles})
+#
+# def file_store(request, id):
+#     print("edit ------------")
+#     income_expense_ledgerValueId = Income_Expense_LedgerValue.objects.get(id=id)
+#     return render(request, 'file_store.html', {'income_expense_ledgerValueId': income_expense_ledgerValueId})

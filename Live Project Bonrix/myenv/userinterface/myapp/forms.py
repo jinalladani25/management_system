@@ -1,6 +1,6 @@
 from django import forms
 from .models import ExpenseCategory, IncomeCategory, Income_Expense_LedgerValue, BalanceValue, \
-    Members_Vendor_Account
+    Members_Vendor_Account,FileStoreValue
 
 
 # class EmployeeForm(forms.ModelForm):
@@ -67,4 +67,13 @@ class Income_Expense_LedgerForm(forms.ModelForm):
                    'opening_balance_bank': forms.TextInput(attrs={'class': 'form-control'}),
                    'closing_balance_bank': forms.TextInput(attrs={'class': 'form-control'}),
                    'entry_time': forms.DateInput(attrs={'class': 'form-control'})
+                   }
+
+
+class FileStoreForm(forms.ModelForm):
+    class Meta:
+        model = FileStoreValue
+        fields = ['text','type_file']  # https://docs.djangoproject.com/en/3.0/ref/forms/widgets/
+        widgets = {'text': forms.TextInput(attrs={'class': 'form-control'}),
+                   'type_file':forms.FileField()
                    }

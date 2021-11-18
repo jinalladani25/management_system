@@ -66,3 +66,13 @@ class Income_Expense_LedgerValue(models.Model):
     opening_balance_bank = models.FloatField(max_length=100)
     closing_balance_bank = models.FloatField(max_length=100)
     entry_time = models.DateTimeField(null=True, blank=True)
+
+
+class FileStore(models.Model):
+    text = models.CharField(max_length=100,null=True,blank=True)
+    type_file = models.FileField(upload_to='filestore/', verbose_name='file', null=True, blank=True)
+
+class FileStoreValue(models.Model):
+    income_Expense_LedgerId = models.ForeignKey(Income_Expense_LedgerValue,on_delete=models.CASCADE)
+    text = models.CharField(max_length=100,null=True,blank=True)
+    type_file = models.FileField(upload_to='filestore/', verbose_name='file', null=True, blank=True)
