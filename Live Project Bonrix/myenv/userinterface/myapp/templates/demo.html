@@ -73,42 +73,47 @@
     <div class="home-content">
         <div class="sales-boxes">
             <div class="recent-sales box">
-                <div class="title">Income/Expense Ledger List</div>
+                <div class="title">File Store</div>
                 <hr>
                 <div class="sales-details">
 
-                    <form method="post" enctype="multipart/form-data">
+                    <form action="file_store" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                                 <div class="form-group row">
                                     <div class="col-sm-3">
                                         <input type="text" name="text" id="text" placeholder="Text Here...."
-                                               style="padding:5px; width:300px;margin-right:10px">
+                                               style="padding:7px; width:300px;margin-right:10px;border:1px solid #24a0ed">
                                     </div>
-                                </div>
-                                <div class="form-group row">
                                     <div class="col-sm-3">
                                         <input type="file" name="filestore" id="filestore"
-                                               style="padding:5px; width:300px;margin-right:10px">
+                                               style="padding:6px; width:300px;margin-left:80px;border:1px solid #24a0ed">
+                                    </div>
+                                     <div class="col-sm-3">
+                                        <button class="btn btn-primary" style="margin-left:150px">upload</button>
                                     </div>
                                 </div>
-<!--                                <input type="text" name="income_Expense_LedgerId" value="{{income_expense_ledger.id}}">-->
-                                <div class="form-group row">
-                                    <div class="col-sm-3">
-                                        <button>upload</button>
-                                    </div>
-                                </div>
+
+                                <input type="hidden" name="income_Expense_LedgerId" value="{{income_Expense_Ledger.id}}">
+
                             </form>
-                            <div class="table-responsive">
+                </div>
+                <hr>
+                    <div class="table-responsive">
                                 <table id="bootstrapdatatable" style="width:100%"
                                        class="table table-striped table-bordered" width="100%">
                                     <thead>
-                                    <th>&nbsp;</th>
                                     <th>ID</th>
                                     <th>Text</th>
                                     <th>Files</th>
                                     </thead>
                                     <tbody>
-                                    <td></td>
+                                    {% for sfile in showfiles%}
+                                        <tr>
+                                            <td>{{sfile.id}}</td>
+                                            <td>{{sfile.text}}</td>
+                                            <td>{{sfile.type_file}}</td>
+                                        </tr>
+                                    {% endfor %}
                                     </tbody>
                                 </table>
                             </div>

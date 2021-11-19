@@ -76,7 +76,7 @@ urlpatterns = [
     path('sample_Excel',views.sample_Excel),
     path('download_excel_data',views.download_excel_data),
     path('export_csv',views.export_csv),
-    path('file_store/<int:id>',views.file_store),
+    path('demo/file_store',views.file_store,name="file_store"),
 ]
 
 

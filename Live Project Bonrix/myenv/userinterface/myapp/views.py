@@ -258,9 +258,6 @@ def multi_deleteIncomeCategory(request):
         return redirect('IncomeCategory')
 
 
-def demo(request):
-    return render(request, 'demo.html')
-
 
 def multipleSearch(request):
     if request.method == 'POST':
@@ -335,7 +332,6 @@ def income_expense_ledgerValue(request):
     transaction_type = request.POST['transaction_type']
     transaction_details = request.POST['transaction_details']
     voucherNo_or_invoiceNo = request.POST['voucherNo_or_invoiceNo']
-    image = request.FILES['image']
     remark = request.POST['remark']
     obc = request.POST['obc']
     cbc = request.POST['cbc']
@@ -438,7 +434,6 @@ def income_expense_ledgerValue(request):
                                                     transaction_type=transaction_type,
                                                     transaction_details=transaction_details,
                                                     voucherNo_or_invoiceNo=voucherNo_or_invoiceNo,
-                                                    image=image,
                                                     remark=remark,
                                                     opening_balance_cash=obc, closing_balance_cash=cbc,
                                                     opening_balance_bank=obb,
@@ -1216,16 +1211,19 @@ def export_csv(request):
 
     return response
 
-def file_store(request,id):
-    income_Expense_LedgerId = Income_Expense_LedgerValue.objects.get(id=id)
+def file_store(request):
+    income_Expense_LedgerId=request.POST['income_Expense_LedgerId']
     text = request.POST['text']
     filestore = request.FILES['filestore']
     print("--------------",text,income_Expense_LedgerId)
     fileid = FileStoreValue.objects.create(text=text,type_file=filestore,income_Expense_LedgerId_id=income_Expense_LedgerId)
-    showfiles = FileStoreValue.objects.all()
-    return render(request,'showincome_expense_ledger.html',{'showfiles':showfiles})
-#
-# def file_store(request, id):
-#     print("edit ------------")
-#     income_expense_ledgerValueId = Income_Expense_LedgerValue.objects.get(id=id)
-#     return render(request, 'file_store.html', {'income_expense_ledgerValueId': income_expense_ledgerValueId})
+    showfiles = FileStoreValue.objects.filter(income_Expense_LedgerId_id = income_Expense_LedgerId)
+    # return redirect('/showincome_expense_ledger')
+    return render(request,'demo.html',{'showfiles':showfiles})
+
+def demo(request,id):
+    income_Expense_Ledger = Income_Expense_LedgerValue.objects.get(id=id)
+    showfiles = FileStoreValue.objects.filter(income_Expense_LedgerId_id=income_Expense_Ledger)
+    return render(request,'demo.html',{'income_Expense_Ledger':income_Expense_Ledger,'showfiles':showfiles})
+
+
