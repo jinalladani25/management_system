@@ -34,22 +34,25 @@ def index(request):
     listExpense = ExpenseCategory.objects.all()
     print(listExpense)
 
-    expense_set = Income_Expense_LedgerValue.objects.all().filter(type='Expense')
-    print("expense_set ------------>", expense_set)
-    for expenseSum in expense_set:
-        exp_sum = expenseSum.category_header
-        print(exp_sum)
-        expenseAmountSum = Income_Expense_LedgerValue.objects.raw(
-            'SELECT SUM(ml.amount) as total,me.category_name,me.id FROM myapp_expensecategory me join myapp_income_expense_ledgervalue ml on ml.category_header=me.category_name WHERE me.category_name="' + exp_sum + '"')
+    expenseAmountSum = Income_Expense_LedgerValue.objects.raw(
+            "SELECT id,category_header,SUM(amount) as totalamount FROM `myapp_income_expense_ledgervalue` WHERE type='Expense' GROUP BY category_header")
 
-    print("------sumamount", expenseAmountSum)
 
     listIncome = IncomeCategory.objects.all()
     print(listIncome)
 
+    incomeAmountSum = Income_Expense_LedgerValue.objects.raw(
+        "SELECT id,category_header,SUM(amount) as totalamount FROM `myapp_income_expense_ledgervalue` WHERE type='Income' GROUP BY category_header")
+
+    topExpense = Income_Expense_LedgerValue.objects.raw("select  id,from_or_to_account,category_header,transaction_type,amount from  myapp_income_expense_ledgervalue WHERE type='Expense' ORDER BY amount DESC LIMIT 20")
+
+    topIncome = Income_Expense_LedgerValue.objects.raw(
+        "select  id,from_or_to_account,category_header,transaction_type,amount from myapp_income_expense_ledgervalue where type='Income' ORDER BY amount DESC LIMIT 20")
+
     return render(request, 'index.html',
                   {'contentBalance': contentBalance, 'totalExpense': totalExpense, 'totalIncome': totalIncome,
-                   'listExpense': listExpense, 'listIncome': listIncome, 'expenseAmountSum': expenseAmountSum
+                   'listExpense': listExpense, 'listIncome': listIncome, 'expenseAmountSum': expenseAmountSum,
+                   'incomeAmountSum':incomeAmountSum,'topExpense':topExpense,'topIncome':topIncome
                    })
 
 
@@ -1215,7 +1218,7 @@ def file_store(request):
     income_Expense_LedgerId=request.POST['income_Expense_LedgerId']
     text = request.POST['text']
     filestore = request.FILES['filestore']
-    print("--------------",text,income_Expense_LedgerId)
+    print("--------------",text,income_Expense_LedgerId,filestore)
     fileid = FileStoreValue.objects.create(text=text,type_file=filestore,income_Expense_LedgerId_id=income_Expense_LedgerId)
     showfiles = FileStoreValue.objects.filter(income_Expense_LedgerId_id = income_Expense_LedgerId)
     # return redirect('/showincome_expense_ledger')
@@ -1227,3 +1230,8 @@ def demo(request,id):
     return render(request,'demo.html',{'income_Expense_Ledger':income_Expense_Ledger,'showfiles':showfiles})
 
 
+def destroyFile(request, id):
+    print("destroy showfiles -----------")
+    showfiles = FileStoreValue.objects.get(id=id)
+    showfiles.delete()
+    return redirect('/demo')

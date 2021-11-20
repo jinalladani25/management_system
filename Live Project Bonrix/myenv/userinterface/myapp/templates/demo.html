@@ -85,7 +85,7 @@
                                                style="padding:7px; width:300px;margin-right:10px;border:1px solid #24a0ed">
                                     </div>
                                     <div class="col-sm-3">
-                                        <input type="file" name="filestore" id="filestore"
+                                        <input type="file" name="filestore" id="filestore" value="{{income_Expense_Ledger.id}}_ "
                                                style="padding:6px; width:300px;margin-left:80px;border:1px solid #24a0ed">
                                     </div>
                                      <div class="col-sm-3">
@@ -105,13 +105,15 @@
                                     <th>ID</th>
                                     <th>Text</th>
                                     <th>Files</th>
+                                    <th> </th>
                                     </thead>
                                     <tbody>
                                     {% for sfile in showfiles%}
                                         <tr>
-                                            <td>{{sfile.id}}</td>
+                                            <td> {{sfile.id}}</td>
                                             <td>{{sfile.text}}</td>
-                                            <td>{{sfile.type_file}}</td>
+                                            <td><a href="filestore/{{sfile.type_file}}">{{sfile.type_file}}</a></td>
+                                            <td><a href="/destroyFile/{{sfile.id}}"><i class="fa fa-remove"></i></a> </td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>

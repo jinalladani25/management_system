@@ -68,7 +68,7 @@ urlpatterns = [
     path('export_users_xlsLedger', views.export_users_xlsLedger),
     path('multi_deleteIncome_Expense_Ledger', views.multi_deleteIncome_Expense_Ledger),
     path('simple_uploadIncome_Expense_Ledger', views.simple_uploadIncome_Expense_Ledger),
-    path('demo/<int:id>', views.demo),
+    path('demo/<int:id>', views.demo,name='demo'),
     path('cashWithdrawal', views.cashWithdrawal),
     path('cashWithdrawEntryValue',views.cashWithdrawEntryValue),
     path('cashDeposit',views.cashDeposit),
@@ -77,6 +77,7 @@ urlpatterns = [
     path('download_excel_data',views.download_excel_data),
     path('export_csv',views.export_csv),
     path('demo/file_store',views.file_store,name="file_store"),
+    path('destroyFile/<int:id>',views.destroyFile,name='deletefile')
 ]
 
 
