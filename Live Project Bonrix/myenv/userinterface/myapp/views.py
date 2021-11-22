@@ -15,7 +15,7 @@ from django.http import HttpResponse
 import time
 import datetime
 from datetime import date
-from datetime import datetime, date
+# from datetime import datetime, date
 
 # Create your views here.
 def index(request):
@@ -49,10 +49,16 @@ def index(request):
     topIncome = Income_Expense_LedgerValue.objects.raw(
         "select  id,from_or_to_account,category_header,transaction_type,amount from myapp_income_expense_ledgervalue where type='Income' ORDER BY amount DESC LIMIT 20")
 
+    topMemberExpense = Income_Expense_LedgerValue.objects.raw("SELECT id,from_or_to_account,SUM(amount) as totalamount FROM `myapp_income_expense_ledgervalue` WHERE type='Expense' GROUP BY from_or_to_account ORDER BY amount DESC LIMIT 20")
+
+    topMemberIncome = Income_Expense_LedgerValue.objects.raw(
+        "SELECT id,from_or_to_account,SUM(amount) as totalamount FROM `myapp_income_expense_ledgervalue` WHERE type='Income' GROUP BY from_or_to_account ORDER BY amount DESC LIMIT 20")
+
     return render(request, 'index.html',
                   {'contentBalance': contentBalance, 'totalExpense': totalExpense, 'totalIncome': totalIncome,
                    'listExpense': listExpense, 'listIncome': listIncome, 'expenseAmountSum': expenseAmountSum,
-                   'incomeAmountSum':incomeAmountSum,'topExpense':topExpense,'topIncome':topIncome
+                   'incomeAmountSum':incomeAmountSum,'topExpense':topExpense,'topIncome':topIncome,
+                   'topMemberExpense':topMemberExpense,'topMemberIncome':topMemberIncome
                    })
 
 
@@ -273,7 +279,7 @@ def multipleSearch(request):
         return redirect('showIncome_expense_ledger')
 
 
-def showincome_expense_ledger(request):
+def showincome_expense_ledger2(request):
     if request.method == 'POST':
         dateOn = request.POST['date']
         amount = request.POST['amount']
@@ -303,6 +309,59 @@ def showincome_expense_ledger(request):
         print("else")
         return render(request, 'showIncome_expense_ledger.html', context)
 
+def showincome_expense_ledger(request):
+    if request.method == 'POST':
+        dateOn = request.POST['date']
+        amount = request.POST['amount']
+        type = request.POST['type']
+        transaction_type = request.POST['transaction_type']
+        category_header = request.POST['category_header']
+        from_or_to_account = request.POST['from_or_to_account']
+        voucherNo_or_invoiceNo = request.POST['voucherNo_or_invoiceNo']
+        print('amount-------------', amount, type)
+        allmembersValue = Members_Vendor_Account.objects.all()
+        contextMember = {
+            'memberValue': allmembersValue
+        }
+        print(contextMember)
+        income_expense_ledger = Income_Expense_LedgerValue.objects.raw(
+            'select * from myapp_income_expense_ledgervalue where dateOn="' + dateOn + '" or type="' + type + '" or amount="' + amount + '" or transaction_type="' + transaction_type + '" or category_header="' + category_header + '" or from_or_to_account="' + from_or_to_account + '" or voucherNo_or_invoiceNo="' + voucherNo_or_invoiceNo + '"')
+        print(income_expense_ledger)
+        if 'export' in request.POST:
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename=ledger' + str(datetime.datetime.now()) + '.csv'
+
+            writer = csv.writer(response)
+            writer.writerow(
+                ['id', 'dateOn', 'type', 'amount', 'category_header', 'from_or_to_account', 'transaction_type',
+                 'transaction_details', 'voucherNo_or_invoiceNo', 'remark', 'opening_balance_cash',
+                 'closing_balance_cash',
+                 'opening_balance_bank', 'closing_balance_bank',
+                 'entry_time'])
+
+            valuestore = income_expense_ledger
+
+            for exp in valuestore:
+                writer.writerow([exp.id, exp.dateOn, exp.type, exp.amount, exp.category_header, exp.from_or_to_account,
+                                 exp.transaction_type,
+                                 exp.transaction_details, exp.voucherNo_or_invoiceNo, exp.remark,
+                                 exp.opening_balance_cash,
+                                 exp.closing_balance_cash, exp.opening_balance_bank, exp.closing_balance_bank,
+                                 exp.entry_time])
+
+            return response
+
+        return render(request, 'showIncome_expense_ledger2.html',
+                      {'income_expense_ledger': income_expense_ledger, 'contextMember': contextMember,'type':type ,'dateOn':dateOn,'amount':amount, 't_type':transaction_type , 'c_header':category_header, 's_member':from_or_to_account, 'v_number':voucherNo_or_invoiceNo  })
+    else:
+        print("allincome_expense_ledger-----------")
+        allincome_expense_ledger = Income_Expense_LedgerValue.objects.all()
+        context = {
+            'income_expense_ledger': allincome_expense_ledger
+        }
+        print(context)
+        print("else")
+        return render(request, 'showIncome_expense_ledger2.html', context)
 
 def addincome_expense_ledger(request):
     print("add  Income_expense_ledger Category--------------------")
@@ -618,37 +677,39 @@ def editIncome_expense_ledger(request, id):
 
 
 def updateIncome_expense_ledger(request, id):
-    # dateOn = request.POST['date']
-    # type = request.POST['type']
-    # amount = request.POST['amount']
-    # category_header = request.POST['category_header']
-    # from_or_to_account = request.POST['from_or_to_account']
-    # transaction_type = request.POST['transaction_type']
-    # transaction_details = request.POST['transaction_details']
-    # voucherNo_or_invoiceNo = request.POST['voucherNo_or_invoiceNo']
-    # remark = request.POST['remark']
-    # income_expense_ledger = Income_Expense_LedgerValue.objects.get(id=id)
-    # income_expense_ledger.dateOn = dateOn
-    # income_expense_ledger.type = type
-    # income_expense_ledger.amount = amount
-    # income_expense_ledger.category_header = category_header
-    # income_expense_ledger.from_or_to_account = from_or_to_account
-    # income_expense_ledger.transaction_type = transaction_type
-    # income_expense_ledger.transaction_details = transaction_details
-    # income_expense_ledger.voucherNo_or_invoiceNo = voucherNo_or_invoiceNo
-    # income_expense_ledger.remark = remark
-    # income_expense_ledger.save()
-
-    print("update Income_expense_ledger-------------")
-    income_expense_ledger = Income_Expense_LedgerValue.objects.get(id=id)
-    print('income_expense_ledger', income_expense_ledger)
-    form = Income_Expense_LedgerForm(request.POST, instance=income_expense_ledger)
-    print('----form---', form)
-    if form.is_valid():
-        form.save()
-        print("save")
+    if request.POST :
+        dateOn = request.POST['date']
+        type = request.POST['type']
+        amount = request.POST['amount']
+        category_header = request.POST['category_header']
+        from_or_to_account = request.POST['from_or_to_account']
+        transaction_type = request.POST['transaction_type']
+        transaction_details = request.POST['transaction_details']
+        voucherNo_or_invoiceNo = request.POST['voucherNo_or_invoiceNo']
+        remark = request.POST['remark']
+        income_expense_ledger = Income_Expense_LedgerValue.objects.get(id=id)
+        income_expense_ledger.dateOn = dateOn
+        income_expense_ledger.type = type
+        income_expense_ledger.amount = amount
+        income_expense_ledger.category_header = category_header
+        income_expense_ledger.from_or_to_account = from_or_to_account
+        income_expense_ledger.transaction_type = transaction_type
+        income_expense_ledger.transaction_details = transaction_details
+        income_expense_ledger.voucherNo_or_invoiceNo = voucherNo_or_invoiceNo
+        income_expense_ledger.remark = remark
+        income_expense_ledger.save()
         return redirect("showIncome_expense_ledger")
-    return render(request, 'editIncome_expense_ledger.html', {'income_expense_ledger': income_expense_ledger})
+    else:
+    # print("update Income_expense_ledger-------------")
+    # income_expense_ledger = Income_Expense_LedgerValue.objects.get(id=id)
+    # print('income_expense_ledger', income_expense_ledger)
+    # form = Income_Expense_LedgerForm(request.POST, instance=income_expense_ledger)
+    # print('----form---', form)
+    # if form.is_valid():
+    #     form.save()
+    #     print("save")
+    #     return redirect("showIncome_expense_ledger")
+        return render(request, 'editIncome_expense_ledger.html', {'income_expense_ledger': income_expense_ledger})
 
 
 def destroyIncome_expense_ledger(request, id):
@@ -1213,6 +1274,8 @@ def export_csv(request):
                          exp.closing_balance_cash,exp.opening_balance_bank,exp.closing_balance_bank,exp.entry_time])
 
     return response
+
+
 
 def file_store(request):
     income_Expense_LedgerId=request.POST['income_Expense_LedgerId']

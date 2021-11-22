@@ -77,7 +77,9 @@ urlpatterns = [
     path('download_excel_data',views.download_excel_data),
     path('export_csv',views.export_csv),
     path('demo/file_store',views.file_store,name="file_store"),
-    path('destroyFile/<int:id>',views.destroyFile,name='deletefile')
+    path('destroyFile/<int:id>',views.destroyFile,name='deletefile'),
+
+    path('showincome_expense_ledger2', views.showincome_expense_ledger2, name="showincome_expense_ledger2"),
 ]
 
 
