@@ -351,7 +351,7 @@ def showincome_expense_ledger(request):
 
             return response
 
-        return render(request, 'showIncome_expense_ledger2.html',
+        return render(request, 'showIncome_expense_ledger.html',
                       {'income_expense_ledger': income_expense_ledger, 'contextMember': contextMember,'type':type ,'dateOn':dateOn,'amount':amount, 't_type':transaction_type , 'c_header':category_header, 's_member':from_or_to_account, 'v_number':voucherNo_or_invoiceNo  })
     else:
         print("allincome_expense_ledger-----------")
@@ -361,7 +361,7 @@ def showincome_expense_ledger(request):
         }
         print(context)
         print("else")
-        return render(request, 'showIncome_expense_ledger2.html', context)
+        return render(request, 'showIncome_expense_ledger.html', context)
 
 def addincome_expense_ledger(request):
     print("add  Income_expense_ledger Category--------------------")
